@@ -27,7 +27,7 @@ var _ = Describe("prefix rewrite", func() {
 		}
 		err := p.ProcessRoute(plugins.RouteParams{}, &v1.Route{
 			RoutePlugins: &v1.RoutePlugins{
-				PrefixRewrite: "/foo",
+				PrefixRewrite: &types.StringValue{Value: "/foo"},
 			},
 		}, out)
 		Expect(err).NotTo(HaveOccurred())
@@ -122,7 +122,7 @@ var _ = Describe("host rewrite", func() {
 		}
 		err := p.ProcessRoute(plugins.RouteParams{}, &v1.Route{
 			RoutePlugins: &v1.RoutePlugins{
-				HostRewriteType: &v1.RoutePlugins_HostRewrite{HostRewrite: "/foo"},
+				HostRewriteType: &v1.RoutePlugins_HostRewrite{HostRewrite: &types.StringValue{Value: "foo"}},
 			},
 		}, out)
 		Expect(err).NotTo(HaveOccurred())
