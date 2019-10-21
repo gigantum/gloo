@@ -201,7 +201,7 @@ $(OUTPUT_DIR)/Dockerfile.gateway: $(GATEWAY_DIR)/cmd/Dockerfile
 
 gateway-docker: $(OUTPUT_DIR)/gateway-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gateway
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gateway \
-		-t quay.io/solo-io/gateway:$(VERSION) \
+		-t gigantum/gateway:$(VERSION) \
 		$(call get_test_tag,gateway)
 
 #----------------------------------------------------------------------------------
@@ -223,7 +223,7 @@ $(OUTPUT_DIR)/Dockerfile.gateway-conversion: $(GATEWAY_CONVERSION_DIR)/cmd/Docke
 
 gateway-conversion-docker: $(OUTPUT_DIR)/gateway-conversion-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gateway-conversion
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gateway-conversion \
-		-t quay.io/solo-io/gateway-conversion:$(VERSION) \
+		-t gigantum/gateway-conversion:$(VERSION) \
 		$(call get_test_tag,gateway-conversion)
 
 #----------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ $(OUTPUT_DIR)/Dockerfile.ingress: $(INGRESS_DIR)/cmd/Dockerfile
 
 ingress-docker: $(OUTPUT_DIR)/ingress-linux-amd64 $(OUTPUT_DIR)/Dockerfile.ingress
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.ingress \
-		-t quay.io/solo-io/ingress:$(VERSION) \
+		-t gigantum/ingress:$(VERSION) \
 		$(call get_test_tag,ingress)
 
 #----------------------------------------------------------------------------------
@@ -267,7 +267,7 @@ $(OUTPUT_DIR)/Dockerfile.access-logger: $(ACCESS_LOG_DIR)/cmd/Dockerfile
 
 access-logger-docker: $(OUTPUT_DIR)/access-logger-linux-amd64 $(OUTPUT_DIR)/Dockerfile.access-logger
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.access-logger \
-		-t quay.io/solo-io/access-logger:$(VERSION) \
+		-t gigantum/access-logger:$(VERSION) \
 		$(call get_test_tag,access-logger)
 
 #----------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ $(OUTPUT_DIR)/Dockerfile.discovery: $(DISCOVERY_DIR)/cmd/Dockerfile
 
 discovery-docker: $(OUTPUT_DIR)/discovery-linux-amd64 $(OUTPUT_DIR)/Dockerfile.discovery
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.discovery \
-		-t quay.io/solo-io/discovery:$(VERSION) \
+		-t gigantum/discovery:$(VERSION) \
 		$(call get_test_tag,discovery)
 
 #----------------------------------------------------------------------------------
@@ -311,7 +311,7 @@ $(OUTPUT_DIR)/Dockerfile.gloo: $(GLOO_DIR)/cmd/Dockerfile
 
 gloo-docker: $(OUTPUT_DIR)/gloo-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gloo
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gloo \
-		-t quay.io/solo-io/gloo:$(VERSION) \
+		-t gigantum/gloo:$(VERSION) \
 		$(call get_test_tag,gloo)
 
 #----------------------------------------------------------------------------------
@@ -334,7 +334,7 @@ $(OUTPUT_DIR)/Dockerfile.envoyinit: $(ENVOYINIT_DIR)/Dockerfile
 .PHONY: gloo-envoy-wrapper-docker
 gloo-envoy-wrapper-docker: $(OUTPUT_DIR)/envoyinit-linux-amd64 $(OUTPUT_DIR)/Dockerfile.envoyinit
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.envoyinit \
-		-t quay.io/solo-io/gloo-envoy-wrapper:$(VERSION) \
+		-t gigantum/gloo-envoy-wrapper:$(VERSION) \
 		$(call get_test_tag,gloo-envoy-wrapper)
 
 
@@ -358,7 +358,7 @@ $(OUTPUT_DIR)/Dockerfile.certgen: $(CERTGEN_DIR)/Dockerfile
 .PHONY: certgen-docker
 certgen-docker: $(OUTPUT_DIR)/certgen-linux-amd64 $(OUTPUT_DIR)/Dockerfile.certgen
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.certgen \
-		-t quay.io/solo-io/certgen:$(VERSION) \
+		-t gigantum/certgen:$(VERSION) \
 		$(call get_test_tag,certgen)
 
 
@@ -461,25 +461,25 @@ docker: discovery-docker gateway-docker gateway-conversion-docker gloo-docker gl
 # to be used for local testing.
 # docker-push is intended to be run by CI
 docker-push: $(DOCKER_IMAGES)
-ifeq ($(RELEASE),"true")
-	docker push quay.io/solo-io/gateway:$(VERSION) && \
-	docker push quay.io/solo-io/gateway-conversion:$(VERSION) && \
-	docker push quay.io/solo-io/ingress:$(VERSION) && \
-	docker push quay.io/solo-io/discovery:$(VERSION) && \
-	docker push quay.io/solo-io/gloo:$(VERSION) && \
-	docker push quay.io/solo-io/gloo-envoy-wrapper:$(VERSION) && \
-	docker push quay.io/solo-io/certgen:$(VERSION) && \
-	docker push quay.io/solo-io/access-logger:$(VERSION)
-endif
+# ifeq ($(RELEASE),"true")
+	docker push gigantum/gateway:$(VERSION) && \
+	docker push gigantum/gateway-conversion:$(VERSION) && \
+	docker push gigantum/ingress:$(VERSION) && \
+	docker push gigantum/discovery:$(VERSION) && \
+	docker push gigantum/gloo:$(VERSION) && \
+	docker push gigantum/gloo-envoy-wrapper:$(VERSION) && \
+	docker push gigantum/certgen:$(VERSION) && \
+	docker push gigantum/access-logger:$(VERSION)
+# endif
 
 push-kind-images: docker
-	kind load docker-image quay.io/solo-io/gateway:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/gateway-conversion:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/ingress:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/discovery:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/gloo:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/gloo-envoy-wrapper:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image quay.io/solo-io/certgen:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/gateway:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/gateway-conversion:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/ingress:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/discovery:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/gloo:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/gloo-envoy-wrapper:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image gigantum/certgen:$(VERSION) --name $(CLUSTER_NAME)
 
 
 #----------------------------------------------------------------------------------
