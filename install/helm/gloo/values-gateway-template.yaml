@@ -95,7 +95,7 @@ ingress:
 
 global:
   image:
-    registry: quay.io/solo-io
+    registry: 695016018841.dkr.ecr.us-east-1.amazonaws.com/gigantum/gloo
     pullPolicy: IfNotPresent
   glooRbac:
     create: true
