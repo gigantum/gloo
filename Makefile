@@ -29,7 +29,8 @@ TEST_IMAGE_TAG := test-$(BUILD_ID)
 TEST_ASSET_DIR := $(ROOTDIR)/_test
 GCR_REPO_PREFIX := gcr.io/$(GCLOUD_PROJECT_ID)
 
-REGISTRY := 695016018841.dkr.ecr.us-east-1.amazonaws.com/
+# REGISTRY := 695016018841.dkr.ecr.us-east-1.amazonaws.com/gigantum/gloo
+REGISTRY := gigantum
 
 #----------------------------------------------------------------------------------
 # Marcos
@@ -202,7 +203,7 @@ $(OUTPUT_DIR)/Dockerfile.gateway: $(GATEWAY_DIR)/cmd/Dockerfile
 
 gateway-docker: $(OUTPUT_DIR)/gateway-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gateway
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gateway \
-		-t $(REGISTRY)gigantum/gloo/gateway:$(VERSION) \
+		-t $(REGISTRY)/gateway:$(VERSION) \
 		$(call get_test_tag,gateway)
 
 #----------------------------------------------------------------------------------
@@ -224,7 +225,7 @@ $(OUTPUT_DIR)/Dockerfile.gateway-conversion: $(GATEWAY_CONVERSION_DIR)/cmd/Docke
 
 gateway-conversion-docker: $(OUTPUT_DIR)/gateway-conversion-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gateway-conversion
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gateway-conversion \
-		-t $(REGISTRY)gigantum/gloo/gateway-conversion:$(VERSION) \
+		-t $(REGISTRY)/gateway-conversion:$(VERSION) \
 		$(call get_test_tag,gateway-conversion)
 
 #----------------------------------------------------------------------------------
@@ -246,7 +247,7 @@ $(OUTPUT_DIR)/Dockerfile.ingress: $(INGRESS_DIR)/cmd/Dockerfile
 
 ingress-docker: $(OUTPUT_DIR)/ingress-linux-amd64 $(OUTPUT_DIR)/Dockerfile.ingress
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.ingress \
-		-t $(REGISTRY)gigantum/gloo/ingress:$(VERSION) \
+		-t $(REGISTRY)/ingress:$(VERSION) \
 		$(call get_test_tag,ingress)
 
 #----------------------------------------------------------------------------------
@@ -268,7 +269,7 @@ $(OUTPUT_DIR)/Dockerfile.access-logger: $(ACCESS_LOG_DIR)/cmd/Dockerfile
 
 access-logger-docker: $(OUTPUT_DIR)/access-logger-linux-amd64 $(OUTPUT_DIR)/Dockerfile.access-logger
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.access-logger \
-		-t $(REGISTRY)gigantum/gloo/access-logger:$(VERSION) \
+		-t $(REGISTRY)/access-logger:$(VERSION) \
 		$(call get_test_tag,access-logger)
 
 #----------------------------------------------------------------------------------
@@ -290,7 +291,7 @@ $(OUTPUT_DIR)/Dockerfile.discovery: $(DISCOVERY_DIR)/cmd/Dockerfile
 
 discovery-docker: $(OUTPUT_DIR)/discovery-linux-amd64 $(OUTPUT_DIR)/Dockerfile.discovery
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.discovery \
-		-t $(REGISTRY)gigantum/gloo/discovery:$(VERSION) \
+		-t $(REGISTRY)/discovery:$(VERSION) \
 		$(call get_test_tag,discovery)
 
 #----------------------------------------------------------------------------------
@@ -312,7 +313,7 @@ $(OUTPUT_DIR)/Dockerfile.gloo: $(GLOO_DIR)/cmd/Dockerfile
 
 gloo-docker: $(OUTPUT_DIR)/gloo-linux-amd64 $(OUTPUT_DIR)/Dockerfile.gloo
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.gloo \
-		-t $(REGISTRY)gigantum/gloo/gloo:$(VERSION) \
+		-t $(REGISTRY)/gloo:$(VERSION) \
 		$(call get_test_tag,gloo)
 
 #----------------------------------------------------------------------------------
@@ -335,7 +336,7 @@ $(OUTPUT_DIR)/Dockerfile.envoyinit: $(ENVOYINIT_DIR)/Dockerfile
 .PHONY: gloo-envoy-wrapper-docker
 gloo-envoy-wrapper-docker: $(OUTPUT_DIR)/envoyinit-linux-amd64 $(OUTPUT_DIR)/Dockerfile.envoyinit
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.envoyinit \
-		-t $(REGISTRY)gigantum/gloo/gloo-envoy-wrapper:$(VERSION) \
+		-t $(REGISTRY)/gloo-envoy-wrapper:$(VERSION) \
 		$(call get_test_tag,gloo-envoy-wrapper)
 
 
@@ -359,7 +360,7 @@ $(OUTPUT_DIR)/Dockerfile.certgen: $(CERTGEN_DIR)/Dockerfile
 .PHONY: certgen-docker
 certgen-docker: $(OUTPUT_DIR)/certgen-linux-amd64 $(OUTPUT_DIR)/Dockerfile.certgen
 	docker build $(OUTPUT_DIR) -f $(OUTPUT_DIR)/Dockerfile.certgen \
-		-t $(REGISTRY)gigantum/gloo/certgen:$(VERSION) \
+		-t $(REGISTRY)/certgen:$(VERSION) \
 		$(call get_test_tag,certgen)
 
 
@@ -457,24 +458,24 @@ docker: discovery-docker gateway-docker gateway-conversion-docker gloo-docker gl
 # docker-push is intended to be run by CI
 docker-push: $(DOCKER_IMAGES)
 ifeq ($(RELEASE),"true")
-	docker push $(REGISTRY)gigantum/gloo/gateway:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/gateway-conversion:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/ingress:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/discovery:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/gloo:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/gloo-envoy-wrapper:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/certgen:$(VERSION) && \
-	docker push $(REGISTRY)gigantum/gloo/access-logger:$(VERSION)
+	docker push $(REGISTRY)/gateway:$(VERSION) && \
+	docker push $(REGISTRY)/gateway-conversion:$(VERSION) && \
+	docker push $(REGISTRY)/ingress:$(VERSION) && \
+	docker push $(REGISTRY)/discovery:$(VERSION) && \
+	docker push $(REGISTRY)/gloo:$(VERSION) && \
+	docker push $(REGISTRY)/gloo-envoy-wrapper:$(VERSION) && \
+	docker push $(REGISTRY)/certgen:$(VERSION) && \
+	docker push $(REGISTRY)/access-logger:$(VERSION)
 endif
 
 push-kind-images: docker
-	kind load docker-image $(REGISTRY)gigantum/gloo/gateway:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/gateway-conversion:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/ingress:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/discovery:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/gloo:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/gloo-envoy-wrapper:$(VERSION) --name $(CLUSTER_NAME)
-	kind load docker-image $(REGISTRY)gigantum/gloo/certgen:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/gateway:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/gateway-conversion:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/ingress:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/discovery:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/gloo:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/gloo-envoy-wrapper:$(VERSION) --name $(CLUSTER_NAME)
+	kind load docker-image $(REGISTRY)/certgen:$(VERSION) --name $(CLUSTER_NAME)
 
 
 #----------------------------------------------------------------------------------
