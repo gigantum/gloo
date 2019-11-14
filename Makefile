@@ -30,7 +30,7 @@ TEST_ASSET_DIR := $(ROOTDIR)/_test
 GCR_REPO_PREFIX := gcr.io/$(GCLOUD_PROJECT_ID)
 
 
-REGISTRY := gigantum
+REGISTRY := 695016018841.dkr.ecr.us-east-1.amazonaws.com/gigantum/gloo
 
 #----------------------------------------------------------------------------------
 # Marcos
